@@ -5,11 +5,12 @@ from torch.nn import functional as F
 # hyperparameters
 batch_size = 32
 block_size = 8
-max_iters = 3000
+max_iters = 300
 eval_interval = 300
 learning_rate = 1e-3
 device = 'cpu'
 eval_iters = 200
+n_embd = 32
 # ---------------
 
 
@@ -58,14 +59,19 @@ def estimate_loss():
 
 class BigramLanguageModel(nn.Module):
 
-    def __init__(self, vocab_size):
+    def __init__(self):
         super().__init__()
-        self.token_embedding_table = nn.Embedding(vocab_size, vocab_size)
+        self.token_embedding_table = nn.Embedding(vocab_size, n_embd)
+        self.position_embedding_table = nn.Embedding(block_size, n_embd)
+        self.lm_head = nn.Linear(n_embd, vocab_size)
 
     def forward(self, idx, targets=None):
-
+        B, T = idx.shape
         # idx and targets are both (B,T) tensor of integers
-        logits = self.token_embedding_table(idx)  # (B,T,C)
+        token_embd = self.token_embedding_table(idx)  # (B,T,C)
+        pos_embd = self.position_embedding_table(torch.arange(T, device=device))
+        x = token_embd + pos_embd
+        logits = self.lm_head(x)
 
         if targets is None:
             loss = None
@@ -87,7 +93,7 @@ class BigramLanguageModel(nn.Module):
         return idx
 
 
-model = BigramLanguageModel(vocab_size)
+model = BigramLanguageModel()
 m = model.to(device)
 optimizer = torch.optim.AdamW(m.parameters(), lr=1e-3)
 
