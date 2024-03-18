@@ -6,8 +6,8 @@ from torch.nn import functional as F
 batch_size = 32
 block_size = 8
 max_iters = 3000
-eval_interval = 500
-learning_rate = 1e-2
+eval_interval = 300
+learning_rate = 1e-3
 device = 'cpu'
 eval_iters = 200
 # ---------------
@@ -23,7 +23,7 @@ vocab_size = len(chars)
 stoi = {ch: i for i, ch in enumerate(chars)}
 itos = {i: ch for i, ch in enumerate(chars)}
 encode = lambda s: [stoi[c] for c in s]  # encoder: take a string, output a list of integers
-decode = lambda ll: ''.join([itos[i] for i in ll])  # decoder: take a list of integers, output a string
+decode = lambda l: ''.join([itos[i] for i in l])  # decoder: take a list of integers, output a string
 
 data = torch.tensor(encode(text), dtype=torch.long)
 n = int(0.9 * len(data))
