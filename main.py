@@ -14,7 +14,7 @@ n_embd = 32
 # ---------------
 
 
-with open('bee-movie.txt', 'r', encoding='utf-8') as f:
+with open('input.txt', 'r', encoding='utf-8') as f:
     text = f.read()
 
 chars = sorted(list(set(text)))
